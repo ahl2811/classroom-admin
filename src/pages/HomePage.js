@@ -13,7 +13,7 @@ import { AppProvider } from "../store";
 import { AdminsPage } from "./Admins";
 import { ClassroomDetailsPage } from "./ClassroomDetails";
 import { ClassroomsPage } from "./Classrooms";
-import AddPassword from "./commons/AddPassword";
+import { AddPasswordPage } from "./commons/AddPassword";
 import NotFoundPage from "./commons/NotFound";
 import ServerError from "./commons/ServerError";
 import Signin from "./commons/Signin";
@@ -106,7 +106,7 @@ export const HomePage = () => {
             <RouteWithLoader
               exact
               path={Routes.AddPassword.path}
-              component={AddPassword}
+              component={AddPasswordPage}
             />
             {/* pages */}
             <RouteWithSidebar

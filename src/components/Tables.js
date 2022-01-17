@@ -1,12 +1,31 @@
-import { Button, Card, Table } from "@themesberg/react-bootstrap";
+import {
+  faEdit,
+  faEllipsisH,
+  faEye,
+  faLock,
+  faLockOpen,
+  faTrashAlt,
+  faUserLock,
+} from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  Button,
+  ButtonGroup,
+  Card,
+  Dropdown,
+  Table,
+} from "@themesberg/react-bootstrap";
 import React, { useState } from "react";
-import { useQuery } from "react-query";
+import { useQuery, useMutation, useQueryClient } from "react-query";
 import { Link } from "react-router-dom";
 import { getAdmins } from "../api/admins";
 import { getClassrooms } from "../api/classroom";
-import { getUsers } from "../api/users";
+import { getUsers, updateUserStatus } from "../api/users";
+import { UserStatus } from "../constants";
 import { Routes } from "../routes";
 import { PaginationTable } from "./PaginationTable";
+import { toast } from "react-toastify";
+import { toastError } from "../api/utils";
 
 export const ClassroomsTable = (props) => {
   const { search } = props;
@@ -77,6 +96,16 @@ export const ClassroomsTable = (props) => {
   );
 };
 
+const getStatusVariant = (status) => {
+  const statusVariant =
+    status === UserStatus.Active
+      ? "text-success"
+      : status === UserStatus.Banned
+      ? "text-danger"
+      : "text-warning";
+  return statusVariant;
+};
+
 export const UsersTable = (props) => {
   const { search } = props;
   const [page, setPage] = useState(1);
@@ -84,6 +113,21 @@ export const UsersTable = (props) => {
   const { data } = useQuery(["users", page, search], () =>
     getUsers({ page, search })
   );
+
+  const queryClient = useQueryClient();
+
+  const { mutateAsync } = useMutation("update-status", updateUserStatus, {
+    onSuccess: () => {
+      queryClient.invalidateQueries("users");
+    },
+    onError: (err) => {
+      toastError(err);
+    },
+  });
+
+  const handleUpdateStatus = (userId, status) => {
+    mutateAsync({ userId, status });
+  };
 
   if (!data || data?.items.length === 0) {
     return <div className="text-center">No results found.</div>;
@@ -95,7 +139,7 @@ export const UsersTable = (props) => {
     const { name, email, studentId, isRegisteredWithGoogle, status, id } =
       props;
 
-    const statusVariant = status === "Active" ? "text-success" : "text-danger";
+    const statusVariant = getStatusVariant(status);
     const accTypeVariant = isRegisteredWithGoogle ? "text-warning" : undefined;
 
     return (
@@ -118,9 +162,44 @@ export const UsersTable = (props) => {
           <span className={`fw-normal ${statusVariant}`}>{status}</span>
         </td>
         <td>
-          <Button size="sm" as={Link} to={`${Routes.Users.path}/${id}`}>
-            Details
-          </Button>
+          <Dropdown as={ButtonGroup}>
+            <Dropdown.Toggle
+              as={Button}
+              split
+              variant="link"
+              className="text-dark m-0 p-0"
+            >
+              <span className="icon icon-sm">
+                <FontAwesomeIcon icon={faEllipsisH} className="icon-dark" />
+              </span>
+            </Dropdown.Toggle>
+            <Dropdown.Menu>
+              <Dropdown.Item>
+                <FontAwesomeIcon icon={faEye} className="me-2" /> View Details
+              </Dropdown.Item>
+              {status !== UserStatus.Banned ? (
+                <Dropdown.Item
+                  onClick={() => handleUpdateStatus(id, UserStatus.Banned)}
+                >
+                  <FontAwesomeIcon
+                    icon={faUserLock}
+                    className="me-2 text-danger"
+                  />{" "}
+                  Ban Account
+                </Dropdown.Item>
+              ) : (
+                <Dropdown.Item
+                  onClick={() => handleUpdateStatus(id, UserStatus.Active)}
+                >
+                  <FontAwesomeIcon
+                    icon={faLockOpen}
+                    className="me-2 text-success"
+                  />{" "}
+                  Unban Account
+                </Dropdown.Item>
+              )}
+            </Dropdown.Menu>
+          </Dropdown>
         </td>
       </tr>
     );
@@ -169,7 +248,7 @@ export const AdminsTable = (props) => {
   const TableRow = (props) => {
     const { name, email, role, status, id } = props;
 
-    const statusVariant = status === "Active" ? "text-success" : "text-danger";
+    const statusVariant = getStatusVariant(status);
 
     return (
       <tr>

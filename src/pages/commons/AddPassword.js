@@ -1,19 +1,74 @@
-import { faAngleLeft, faUnlockAlt } from "@fortawesome/free-solid-svg-icons";
+import { faAngleLeft } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  Button,
-  Card,
-  Col,
-  Container,
-  Form,
-  InputGroup,
-  Row,
-} from "@themesberg/react-bootstrap";
+import { Card, Col, Container, Form, Row } from "@themesberg/react-bootstrap";
+import { Formik } from "formik";
 import React from "react";
-import { Link } from "react-router-dom";
+import { useMutation, useQuery } from "react-query";
+import { Link, useHistory, useLocation } from "react-router-dom";
+import { toast } from "react-toastify";
+import * as yup from "yup";
+import { addPassword, validateToken } from "../../api/auth";
+import { toastError } from "../../api/utils";
+import { LoadingButton } from "../../components/LoadingButton";
+import useUserContext from "../../hooks/useUserContext";
+import NotFound from "../../pages/commons/NotFound";
 import { Routes } from "../../routes";
 
-export default () => {
+const passwordSchema = yup.object().shape({
+  password: yup
+    .string()
+    .required("Password is required")
+    .matches(
+      /^.*(?=.{8,})((?=.*[!@#$%^&*()\-_=+{};:,<.>]){1})(?=.*\d)((?=.*[a-z]){1})((?=.*[A-Z]){1}).*$/,
+      "Password must contain at least 8 characters, one uppercase, one number and one special case character"
+    ),
+  confirmPassword: yup
+    .string()
+    .required("Confirm password is required.")
+    .oneOf([yup.ref("password"), null], "Passwords must match"),
+});
+
+export const AddPasswordPage = () => {
+  const { user } = useUserContext();
+  const history = useHistory();
+  const location = useLocation();
+  let { from } = location.state || { from: { pathname: Routes.Admins.path } };
+
+  const { search } = useLocation();
+  const params = search.split("=");
+  const token = params[1];
+
+  if (user) {
+    history.replace(from);
+  }
+
+  const { error: validateTokenError } = useQuery("token-validation", () =>
+    validateToken(encodeURIComponent(token))
+  );
+
+  const {
+    isLoading: isAddNewPasswordLoading,
+    mutateAsync: addnewPasswordAsync,
+  } = useMutation("add-password", addPassword, {
+    onSuccess: () => {
+      toast.success("Add new password successfully. Now you can login.", {
+        position: "top-center",
+      });
+      history.push("/login");
+    },
+    onError: (err) => {
+      toastError(err);
+    },
+  });
+
+  const handleAddNewPassword = (data) => {
+    addnewPasswordAsync({ password: data.password, token });
+  };
+
+  if (validateTokenError) {
+    return <NotFound />;
+  }
+
   return (
     <main>
       <section className="bg-soft d-flex align-items-center my-5 mt-lg-6 mb-lg-5">
@@ -35,37 +90,70 @@ export default () => {
             >
               <div className="bg-white shadow-soft border rounded border-light p-4 p-lg-5 w-100 fmxw-500">
                 <h3 className="mb-4">Add password</h3>
-                <Form>
-                  <Form.Group id="password" className="mb-4">
-                    <Form.Label>Your Password</Form.Label>
-                    <InputGroup>
-                      <InputGroup.Text>
-                        <FontAwesomeIcon icon={faUnlockAlt} />
-                      </InputGroup.Text>
-                      <Form.Control
-                        required
-                        type="password"
-                        placeholder="Password"
-                      />
-                    </InputGroup>
-                  </Form.Group>
-                  <Form.Group id="confirmPassword" className="mb-4">
-                    <Form.Label>Confirm Password</Form.Label>
-                    <InputGroup>
-                      <InputGroup.Text>
-                        <FontAwesomeIcon icon={faUnlockAlt} />
-                      </InputGroup.Text>
-                      <Form.Control
-                        required
-                        type="password"
-                        placeholder="Confirm Password"
-                      />
-                    </InputGroup>
-                  </Form.Group>
-                  <Button variant="primary" type="submit" className="w-100">
-                    Add password
-                  </Button>
-                </Form>
+                <Formik
+                  validationSchema={passwordSchema}
+                  onSubmit={handleAddNewPassword}
+                  initialValues={{
+                    password: "",
+                    confirmPassword: "",
+                  }}
+                >
+                  {({
+                    handleSubmit,
+                    handleChange,
+                    handleBlur,
+                    values,
+                    touched,
+                    errors,
+                  }) => {
+                    return (
+                      <Form onSubmit={handleSubmit}>
+                        <Form.Group className="mb-3">
+                          <Form.Label>Password</Form.Label>
+                          <Form.Control
+                            type="password"
+                            name="password"
+                            value={values.password}
+                            onChange={handleChange}
+                            onBlur={handleBlur}
+                            isInvalid={!!errors.password}
+                            isValid={touched.password && !errors.password}
+                          />
+                          <Form.Control.Feedback type="invalid">
+                            {errors.password}
+                          </Form.Control.Feedback>
+                        </Form.Group>
+                        <Form.Group className="mb-3">
+                          <Form.Label>Confirm Password</Form.Label>
+                          <Form.Control
+                            type="password"
+                            name="confirmPassword"
+                            value={values.confirmPassword}
+                            onChange={handleChange}
+                            onBlur={handleBlur}
+                            isInvalid={!!errors.confirmPassword}
+                            isValid={
+                              touched.confirmPassword && !errors.confirmPassword
+                            }
+                          />
+                          <Form.Control.Feedback type="invalid">
+                            {errors.confirmPassword}
+                          </Form.Control.Feedback>
+                        </Form.Group>
+                        <Form.Group>
+                          <LoadingButton
+                            variant="primary"
+                            type="submit"
+                            isLoading={isAddNewPasswordLoading}
+                            className="w-100 mt-3 mb-2 classroom-btn"
+                          >
+                            Submit
+                          </LoadingButton>
+                        </Form.Group>
+                      </Form>
+                    );
+                  }}
+                </Formik>
               </div>
             </Col>
           </Row>

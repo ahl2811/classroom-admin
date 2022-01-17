@@ -8,3 +8,15 @@ export const getUsers = async ({ page = 1, search = null }) => {
   const { data } = await request.get(`${queryString}`, getAuthorization());
   return data;
 };
+
+export const updateUserStatus = async ({ userId, status }) => {
+  return await request.patch(`/user/${userId}`, { status }, getAuthorization());
+};
+
+export const updateStudentId = async ({ userId, studentId }) => {
+  return await request.patch(
+    `/user/${userId}`,
+    { studentId },
+    getAuthorization()
+  );
+};
