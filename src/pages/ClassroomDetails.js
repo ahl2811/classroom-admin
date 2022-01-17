@@ -16,7 +16,7 @@ import React from "react";
 import { GeneralInfoForm } from "../components/Forms";
 import { ProfileCardWidget } from "../components/Widgets";
 
-export const AdminDetailsPage = () => {
+export const ClassroomDetailsPage = () => {
   return (
     <>
       <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center py-4">

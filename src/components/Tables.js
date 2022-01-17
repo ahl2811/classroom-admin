@@ -1,130 +1,12 @@
-import {
-  faEdit,
-  faEllipsisH,
-  faEye,
-  faTrashAlt,
-} from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  Button,
-  ButtonGroup,
-  Card,
-  Dropdown,
-  Nav,
-  Pagination,
-  Table,
-} from "@themesberg/react-bootstrap";
+import { Button, Card, Table } from "@themesberg/react-bootstrap";
 import React, { useState } from "react";
 import { useQuery } from "react-query";
+import { Link } from "react-router-dom";
+import { getAdmins } from "../api/admins";
 import { getClassrooms } from "../api/classroom";
-import transactions from "../data/transactions";
+import { getUsers } from "../api/users";
+import { Routes } from "../routes";
 import { PaginationTable } from "./PaginationTable";
-
-export const TransactionsTable = () => {
-  const totalTransactions = transactions.length;
-
-  const TableRow = (props) => {
-    const { invoiceNumber, subscription, price, issueDate, dueDate, status } =
-      props;
-    const statusVariant =
-      status === "Paid"
-        ? "success"
-        : status === "Due"
-        ? "warning"
-        : status === "Canceled"
-        ? "danger"
-        : "primary";
-
-    return (
-      <tr>
-        <td>
-          <Card.Link className="fw-normal">{invoiceNumber}</Card.Link>
-        </td>
-        <td>
-          <span className="fw-normal">{subscription}</span>
-        </td>
-        <td>
-          <span className="fw-normal">{issueDate}</span>
-        </td>
-        <td>
-          <span className="fw-normal">{dueDate}</span>
-        </td>
-        <td>
-          <span className="fw-normal">${parseFloat(price).toFixed(2)}</span>
-        </td>
-        <td>
-          <span className={`fw-normal text-${statusVariant}`}>{status}</span>
-        </td>
-        <td>
-          <Dropdown as={ButtonGroup}>
-            <Dropdown.Toggle
-              as={Button}
-              split
-              variant="link"
-              className="text-dark m-0 p-0"
-            >
-              <span className="icon icon-sm">
-                <FontAwesomeIcon icon={faEllipsisH} className="icon-dark" />
-              </span>
-            </Dropdown.Toggle>
-            <Dropdown.Menu>
-              <Dropdown.Item>
-                <FontAwesomeIcon icon={faEye} className="me-2" /> View Details
-              </Dropdown.Item>
-              <Dropdown.Item>
-                <FontAwesomeIcon icon={faEdit} className="me-2" /> Edit
-              </Dropdown.Item>
-              <Dropdown.Item className="text-danger">
-                <FontAwesomeIcon icon={faTrashAlt} className="me-2" /> Remove
-              </Dropdown.Item>
-            </Dropdown.Menu>
-          </Dropdown>
-        </td>
-      </tr>
-    );
-  };
-
-  return (
-    <Card border="light" className="table-wrapper table-responsive shadow-sm">
-      <Card.Body className="pt-0">
-        <Table hover className="user-table align-items-center">
-          <thead>
-            <tr>
-              <th className="border-bottom">#</th>
-              <th className="border-bottom">Bill For</th>
-              <th className="border-bottom">Issue Date</th>
-              <th className="border-bottom">Due Date</th>
-              <th className="border-bottom">Total</th>
-              <th className="border-bottom">Status</th>
-              <th className="border-bottom">Action</th>
-            </tr>
-          </thead>
-          <tbody>
-            {transactions.map((t) => (
-              <TableRow key={`transaction-${t.invoiceNumber}`} {...t} />
-            ))}
-          </tbody>
-        </Table>
-        <Card.Footer className="px-3 border-0 d-lg-flex align-items-center justify-content-between">
-          <Nav>
-            <Pagination className="mb-2 mb-lg-0">
-              <Pagination.Prev>Previous</Pagination.Prev>
-              <Pagination.Item active>1</Pagination.Item>
-              <Pagination.Item>2</Pagination.Item>
-              <Pagination.Item>3</Pagination.Item>
-              <Pagination.Item>4</Pagination.Item>
-              <Pagination.Item>5</Pagination.Item>
-              <Pagination.Next>Next</Pagination.Next>
-            </Pagination>
-          </Nav>
-          <small className="fw-bold">
-            Showing <b>{totalTransactions}</b> out of <b>25</b> entries
-          </small>
-        </Card.Footer>
-      </Card.Body>
-    </Card>
-  );
-};
 
 export const ClassroomsTable = (props) => {
   const { search } = props;
@@ -161,7 +43,9 @@ export const ClassroomsTable = (props) => {
           <span className="fw-normal">{section}</span>
         </td>
         <td>
-          <Button size="sm">Details</Button>
+          <Button size="sm" as={Link} to={`${Routes.Classrooms.path}/${id}`}>
+            Details
+          </Button>
         </td>
       </tr>
     );
@@ -178,6 +62,148 @@ export const ClassroomsTable = (props) => {
               <th className="border-bottom">Description</th>
               <th className="border-bottom">Subject</th>
               <th className="border-bottom">Section</th>
+              <th className="border-bottom">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {items.map((t) => (
+              <TableRow key={`transaction-${t.code}`} {...t} />
+            ))}
+          </tbody>
+        </Table>
+        <PaginationTable onChangePage={setPage} {...meta} />
+      </Card.Body>
+    </Card>
+  );
+};
+
+export const UsersTable = (props) => {
+  const { search } = props;
+  const [page, setPage] = useState(1);
+
+  const { data } = useQuery(["users", page, search], () =>
+    getUsers({ page, search })
+  );
+
+  if (!data || data?.items.length === 0) {
+    return <div className="text-center">No results found.</div>;
+  }
+
+  const { items, meta } = data;
+
+  const TableRow = (props) => {
+    const { name, email, studentId, isRegisteredWithGoogle, status, id } =
+      props;
+
+    const statusVariant = status === "Active" ? "text-success" : "text-danger";
+    const accTypeVariant = isRegisteredWithGoogle ? "text-warning" : undefined;
+
+    return (
+      <tr>
+        <td>
+          <Card.Link className="fw-normal">{studentId}</Card.Link>
+        </td>
+        <td>
+          <span className="fw-normal">{name}</span>
+        </td>
+        <td>
+          <span className="fw-normal">{email}</span>
+        </td>
+        <td>
+          <span className={`fw-normal ${accTypeVariant}`}>
+            {isRegisteredWithGoogle ? "Google" : "Credentials"}
+          </span>
+        </td>
+        <td>
+          <span className={`fw-normal ${statusVariant}`}>{status}</span>
+        </td>
+        <td>
+          <Button size="sm" as={Link} to={`${Routes.Users.path}/${id}`}>
+            Details
+          </Button>
+        </td>
+      </tr>
+    );
+  };
+
+  return (
+    <Card border="light" className="table-wrapper table-responsive shadow-sm">
+      <Card.Body className="pt-0">
+        <Table hover className="user-table align-items-center">
+          <thead>
+            <tr>
+              <th className="border-bottom">Student ID</th>
+              <th className="border-bottom">Full Name</th>
+              <th className="border-bottom">Email</th>
+              <th className="border-bottom">Account Type</th>
+              <th className="border-bottom">Status</th>
+              <th className="border-bottom">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {items.map((t) => (
+              <TableRow key={`transaction-${t.code}`} {...t} />
+            ))}
+          </tbody>
+        </Table>
+        <PaginationTable onChangePage={setPage} {...meta} />
+      </Card.Body>
+    </Card>
+  );
+};
+
+export const AdminsTable = (props) => {
+  const { search } = props;
+  const [page, setPage] = useState(1);
+
+  const { data } = useQuery(["admins", page, search], () =>
+    getAdmins({ page, search })
+  );
+
+  if (!data || data?.items.length === 0) {
+    return <div className="text-center">No results found.</div>;
+  }
+
+  const { items, meta } = data;
+
+  const TableRow = (props) => {
+    const { name, email, role, status, id } = props;
+
+    const statusVariant = status === "Active" ? "text-success" : "text-danger";
+
+    return (
+      <tr>
+        <td>
+          <span className="fw-normal">{name}</span>
+        </td>
+        <td>
+          <span className="fw-normal">{email}</span>
+        </td>
+        <td>
+          <span className={`fw-normal text-capitalize`}>{role}</span>
+        </td>
+        <td>
+          <span className={`fw-normal ${statusVariant}`}>{status}</span>
+        </td>
+        <td>
+          <Button size="sm" as={Link} to={`${Routes.Users.path}/${id}`}>
+            Details
+          </Button>
+        </td>
+      </tr>
+    );
+  };
+
+  return (
+    <Card border="light" className="table-wrapper table-responsive shadow-sm">
+      <Card.Body className="pt-0">
+        <Table hover className="user-table align-items-center">
+          <thead>
+            <tr>
+              <th className="border-bottom">Full Name</th>
+              <th className="border-bottom">Email</th>
+              <th className="border-bottom">Role</th>
+              <th className="border-bottom">Status</th>
               <th className="border-bottom">Actions</th>
             </tr>
           </thead>

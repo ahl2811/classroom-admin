@@ -14,6 +14,9 @@ export const PaginationTable = (props) => {
 
   return (
     <Card.Footer className="px-3 border-0 d-lg-flex align-items-center justify-content-between">
+      <small className="fw-bold">
+        Showing <b>{itemCount}</b> out of <b>{totalItems}</b> entries
+      </small>
       <Nav>
         <Pagination className="mb-2 mb-lg-0">
           <Pagination.Prev
@@ -39,9 +42,6 @@ export const PaginationTable = (props) => {
           </Pagination.Next>
         </Pagination>
       </Nav>
-      <small className="fw-bold">
-        Showing <b>{itemCount}</b> out of <b>{totalItems}</b> entries
-      </small>
     </Card.Footer>
   );
 };

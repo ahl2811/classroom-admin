@@ -3,7 +3,6 @@ import { QueryClient, QueryClientProvider } from "react-query";
 import { Redirect, Route, Switch } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import Footer from "../components/Footer";
 import Navbar from "../components/Navbar";
 import Preloader from "../components/Preloader";
 // components
@@ -12,11 +11,13 @@ import useUserContext from "../hooks/useUserContext";
 import { Routes } from "../routes";
 import { AppProvider } from "../store";
 import { AdminsPage } from "./Admins";
+import { ClassroomDetailsPage } from "./ClassroomDetails";
 import { ClassroomsPage } from "./Classrooms";
+import AddPassword from "./commons/AddPassword";
 import NotFoundPage from "./commons/NotFound";
 import ServerError from "./commons/ServerError";
 import Signin from "./commons/Signin";
-import Settings from "./Settings";
+import { AdminDetailsPage } from "./Settings";
 import { UsersPage } from "./Users";
 
 const RouteWithLoader = ({ component: Component, ...rest }) => {
@@ -58,9 +59,11 @@ const RouteWithSidebar = ({ component: Component, ...rest }) => {
             <Preloader show={loaded ? false : true} />
             <Sidebar />
 
-            <main className="content me-3 pb-4">
+            <main className="content pb-4">
               <Navbar />
-              <Component {...props} />
+              <div className="mt-2">
+                <Component {...props} />
+              </div>
               {/* <Footer toggleSettings={toggleSettings} showSettings={false} /> */}
             </main>
           </>
@@ -100,7 +103,17 @@ export const HomePage = () => {
               path={Routes.ServerError.path}
               component={ServerError}
             />
+            <RouteWithLoader
+              exact
+              path={Routes.AddPassword.path}
+              component={AddPassword}
+            />
             {/* pages */}
+            <RouteWithSidebar
+              exact
+              path={Routes.AdminDetails.path}
+              component={AdminDetailsPage}
+            />
             <RouteWithSidebar
               exact
               path={Routes.Admins.path}
@@ -118,8 +131,8 @@ export const HomePage = () => {
             />
             <RouteWithSidebar
               exact
-              path={Routes.AdminDetails.path}
-              component={Settings}
+              path={Routes.ClassroomDetails.path}
+              component={ClassroomDetailsPage}
             />
             <Redirect to={Routes.Signin.path} />
           </Switch>
