@@ -1,5 +1,6 @@
 import {
   faAddressBook,
+  faCog,
   faGraduationCap,
   faRocket,
   faSignOutAlt,
@@ -150,11 +151,11 @@ export default (props = {}) => {
                 icon={faGraduationCap}
                 link={Routes.Classrooms.path}
               />
-              {/* <NavItem
+              <NavItem
                 title="Settings"
                 icon={faCog}
                 link={Routes.AdminDetails.path}
-              /> */}
+              />
               <Dropdown.Divider className="my-3 border-indigo" />
 
               <Button variant="secondary" className="upgrade-to-pro">

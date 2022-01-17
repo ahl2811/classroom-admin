@@ -1,45 +1,33 @@
-import { faCheck, faCog, faSearch } from "@fortawesome/free-solid-svg-icons";
+import { faCheck, faCog } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   Button,
   ButtonGroup,
   Col,
   Dropdown,
-  Form,
-  InputGroup,
   Row,
 } from "@themesberg/react-bootstrap";
-import React from "react";
-import { TransactionsTable } from "../components/Tables";
+import React, { useState } from "react";
+import { SearchBox } from "../components/SearchBox";
+import { ClassroomsTable } from "../components/Tables";
+
+// code: "e9j381lw";
+// description: "Dess";
+// id: "9301ef2e-3feb-4fb0-81fd-ae67535fa8b3";
+// name: "WEBNC";
+// room: null;
+// section: "";
+// subject: "";
 
 export const ClassroomsPage = () => {
+  const [search, setSearch] = useState("");
+  console.log("search", search);
   return (
     <>
-      <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center py-4">
-        <div className="d-block mb-4 mb-md-0">
-          <h4>Admin List</h4>
-        </div>
-        <div className="btn-toolbar mb-2 mb-md-0">
-          <ButtonGroup>
-            <Button variant="outline-primary" size="sm">
-              Share
-            </Button>
-            <Button variant="outline-primary" size="sm">
-              Export
-            </Button>
-          </ButtonGroup>
-        </div>
-      </div>
-
       <div className="table-settings mb-4">
         <Row className="justify-content-between align-items-center">
           <Col xs={8} md={6} lg={3} xl={4}>
-            <InputGroup>
-              <InputGroup.Text>
-                <FontAwesomeIcon icon={faSearch} />
-              </InputGroup.Text>
-              <Form.Control type="text" placeholder="Search" />
-            </InputGroup>
+            <SearchBox callback={setSearch} />
           </Col>
           <Col xs={4} md={2} xl={1} className="ps-md-0 text-end">
             <Dropdown as={ButtonGroup}>
@@ -71,7 +59,7 @@ export const ClassroomsPage = () => {
         </Row>
       </div>
 
-      <TransactionsTable />
+      <ClassroomsTable search={search} />
     </>
   );
 };
