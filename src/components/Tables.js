@@ -1,10 +1,7 @@
 import {
-  faEdit,
   faEllipsisH,
   faEye,
-  faLock,
   faLockOpen,
-  faTrashAlt,
   faUserLock,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -16,16 +13,15 @@ import {
   Table,
 } from "@themesberg/react-bootstrap";
 import React, { useState } from "react";
-import { useQuery, useMutation, useQueryClient } from "react-query";
+import { useMutation, useQuery, useQueryClient } from "react-query";
 import { Link } from "react-router-dom";
 import { getAdmins } from "../api/admins";
 import { getClassrooms } from "../api/classroom";
 import { getUsers, updateUserStatus } from "../api/users";
+import { toastError } from "../api/utils";
 import { UserStatus } from "../constants";
 import { Routes } from "../routes";
 import { PaginationTable } from "./PaginationTable";
-import { toast } from "react-toastify";
-import { toastError } from "../api/utils";
 
 export const ClassroomsTable = (props) => {
   const { search } = props;
