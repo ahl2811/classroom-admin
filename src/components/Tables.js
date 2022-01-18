@@ -176,7 +176,7 @@ export const UsersTable = (props) => {
                       icon={faUserLock}
                       className="me-2 text-danger"
                     />{" "}
-                    Lock Account
+                    Ban Account
                   </Dropdown.Item>
                 ) : (
                   <Dropdown.Item
@@ -186,7 +186,7 @@ export const UsersTable = (props) => {
                       icon={faLockOpen}
                       className="me-2 text-success"
                     />{" "}
-                    UnLock Account
+                    Unban Account
                   </Dropdown.Item>
                 )}
               </Dropdown.Menu>

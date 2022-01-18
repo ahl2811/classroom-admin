@@ -1,9 +1,10 @@
-import { Button, Card, Col, Form, Row } from "@themesberg/react-bootstrap";
+import { Card, Col, Form, Row } from "@themesberg/react-bootstrap";
 import React, { useEffect, useState } from "react";
 import { useMutation, useQueryClient } from "react-query";
 import { toast } from "react-toastify";
 import { updateStudentId } from "../api/users";
 import { toastError } from "../api/utils";
+import { LoadingButton } from "./LoadingButton";
 
 export const ClassroomForm = (props) => {
   const { name, code, description, section } = props;
@@ -111,15 +112,19 @@ export const UserForm = (props) => {
 
   const queryClient = useQueryClient();
 
-  const { mutateAsync } = useMutation("update-studentId", updateStudentId, {
-    onSuccess: () => {
-      toast.success("Update student ID successfully.");
-      queryClient.invalidateQueries(["user", userId]);
-    },
-    onError: (err) => {
-      toastError(err);
-    },
-  });
+  const { mutateAsync, isLoading } = useMutation(
+    "update-studentId",
+    updateStudentId,
+    {
+      onSuccess: () => {
+        toast.success("Update student ID successfully.");
+        queryClient.invalidateQueries(["user", userId]);
+      },
+      onError: (err) => {
+        toastError(err);
+      },
+    }
+  );
 
   useEffect(() => {
     setStId(studentId);
@@ -182,9 +187,13 @@ export const UserForm = (props) => {
             </Col>
           </Row>
           <div className="mt-3">
-            <Button variant="primary" type="submit">
+            <LoadingButton
+              isLoading={isLoading}
+              variant="primary"
+              type="submit"
+            >
               Save All
-            </Button>
+            </LoadingButton>
           </div>
         </Form>
       </Card.Body>

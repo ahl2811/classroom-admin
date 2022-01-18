@@ -120,9 +120,7 @@ export default () => {
                           Remember me
                         </FormCheck.Label>
                       </Form.Check>
-                      <Card.Link className="small text-end">
-                        Lost password?
-                      </Card.Link>
+                      <Card.Link className="small text-end"></Card.Link>
                     </div>
                   </Form.Group>
                   <Button

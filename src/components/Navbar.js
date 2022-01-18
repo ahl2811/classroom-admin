@@ -9,11 +9,13 @@ import {
   Navbar,
 } from "@themesberg/react-bootstrap";
 import React, { useState } from "react";
+import { Link } from "react-router-dom";
 import NOTIFICATIONS_DATA from "../data/notifications";
 import useUserContext from "../hooks/useUserContext";
+import { Routes } from "../routes";
 import { Logout } from "../store/actions";
 
-const AvatarUrl =
+export const UserAvatarUrl =
   "https://avataaars.io/?avatarStyle=Circle&topType=Eyepatch&facialHairType=Blank&clotheType=BlazerShirt&eyeType=Wink&eyebrowType=UpDownNatural&mouthType=Smile&skinColor=Brown";
 
 export default () => {
@@ -39,7 +41,9 @@ export default () => {
     <Navbar variant="dark" expanded className="ps-0 pe-2 pb-0">
       <Container fluid className="px-0">
         <div className="d-flex justify-content-between w-100">
-          <div className="d-flex align-items-center">Wish you a nice day !</div>
+          <div className="d-flex align-items-center text-secondary">
+            Have a nice day !
+          </div>
           <Nav className="align-items-center">
             <Dropdown as={Nav.Item} onToggle={markNotificationsAsRead}>
               <Dropdown.Toggle
@@ -59,7 +63,7 @@ export default () => {
               <Dropdown.Toggle as={Nav.Link} className="pt-1 px-0">
                 <div className="media d-flex align-items-center">
                   <Image
-                    src={AvatarUrl}
+                    src={UserAvatarUrl}
                     className="user-avatar md-avatar rounded-circle"
                   />
                   <div className="media-body ms-2 text-dark align-items-center d-none d-lg-block">
@@ -68,7 +72,11 @@ export default () => {
                 </div>
               </Dropdown.Toggle>
               <Dropdown.Menu className="user-dropdown dropdown-menu-right mt-2">
-                <Dropdown.Item className="fw-bold">
+                <Dropdown.Item
+                  className="fw-bold"
+                  as={Link}
+                  to={`${Routes.Admins.path}/${user?.id}`}
+                >
                   <FontAwesomeIcon icon={faUserCircle} className="me-2" /> My
                   Profile
                 </Dropdown.Item>

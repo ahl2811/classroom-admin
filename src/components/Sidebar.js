@@ -1,6 +1,5 @@
 import {
   faAddressBook,
-  faCog,
   faGraduationCap,
   faRocket,
   faSignOutAlt,
@@ -20,9 +19,11 @@ import React, { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { CSSTransition } from "react-transition-group";
 import SimpleBar from "simplebar-react";
-import ProfilePicture from "../assets/img/team/profile-picture-3.jpg";
 import ReactHero from "../assets/img/technologies/react-hero-logo.svg";
+import useUserContext from "../hooks/useUserContext";
 import { Routes } from "../routes";
+import { Logout } from "../store/actions";
+import { UserAvatarUrl } from "./Navbar";
 
 export default (props = {}) => {
   const location = useLocation();
@@ -31,6 +32,7 @@ export default (props = {}) => {
   const showClass = show ? "show" : "";
 
   const onCollapse = () => setShow(!show);
+  const { user, dispatch } = useUserContext();
 
   const NavItem = (props) => {
     const {
@@ -85,6 +87,10 @@ export default (props = {}) => {
     );
   };
 
+  const handleLogout = () => {
+    dispatch(Logout());
+  };
+
   return (
     <>
       <Navbar
@@ -113,12 +119,12 @@ export default (props = {}) => {
               <div className="d-flex align-items-center">
                 <div className="user-avatar lg-avatar me-4">
                   <Image
-                    src={ProfilePicture}
+                    src={UserAvatarUrl}
                     className="card-img-top rounded-circle border-white"
                   />
                 </div>
                 <div className="d-block">
-                  <h6>Hi, Jane</h6>
+                  <h6>Hi, {user?.name}</h6>
                   <Button
                     as={Link}
                     variant="secondary"
@@ -126,7 +132,11 @@ export default (props = {}) => {
                     to={Routes.Signin.path}
                     className="text-dark"
                   >
-                    <FontAwesomeIcon icon={faSignOutAlt} className="me-2" />{" "}
+                    <FontAwesomeIcon
+                      icon={faSignOutAlt}
+                      className="me-2"
+                      onClick={handleLogout}
+                    />{" "}
                     Sign Out
                   </Button>
                 </div>
@@ -139,7 +149,11 @@ export default (props = {}) => {
               </Nav.Link>
             </div>
             <Nav className="flex-column pt-3 pt-md-0">
-              <NavItem title="Classrooms Manager" image={ReactHero} />
+              <NavItem
+                title="Classrooms Manager"
+                image={ReactHero}
+                link={"#"}
+              />
               <NavItem
                 title="Admins"
                 icon={faAddressBook}
@@ -150,11 +164,6 @@ export default (props = {}) => {
                 title="Classrooms"
                 icon={faGraduationCap}
                 link={Routes.Classrooms.path}
-              />
-              <NavItem
-                title="Settings"
-                icon={faCog}
-                link={Routes.AdminDetails.path}
               />
               <Dropdown.Divider className="my-3 border-indigo" />
 

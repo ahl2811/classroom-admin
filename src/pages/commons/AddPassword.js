@@ -116,7 +116,7 @@ export const AddPasswordPage = () => {
                             value={values.password}
                             onChange={handleChange}
                             onBlur={handleBlur}
-                            isInvalid={!!errors.password}
+                            isInvalid={touched.password && !!errors.password}
                             isValid={touched.password && !errors.password}
                           />
                           <Form.Control.Feedback type="invalid">
@@ -131,7 +131,10 @@ export const AddPasswordPage = () => {
                             value={values.confirmPassword}
                             onChange={handleChange}
                             onBlur={handleBlur}
-                            isInvalid={!!errors.confirmPassword}
+                            isInvalid={
+                              touched.confirmPassword &&
+                              !!errors.confirmPassword
+                            }
                             isValid={
                               touched.confirmPassword && !errors.confirmPassword
                             }
