@@ -9,10 +9,12 @@ import {
   Navbar,
 } from "@themesberg/react-bootstrap";
 import React, { useState } from "react";
-import Profile3 from "../assets/img/team/profile-picture-3.jpg";
 import NOTIFICATIONS_DATA from "../data/notifications";
 import useUserContext from "../hooks/useUserContext";
 import { Logout } from "../store/actions";
+
+const AvatarUrl =
+  "https://avataaars.io/?avatarStyle=Circle&topType=Eyepatch&facialHairType=Blank&clotheType=BlazerShirt&eyeType=Wink&eyebrowType=UpDownNatural&mouthType=Smile&skinColor=Brown";
 
 export default () => {
   const [notifications, setNotifications] = useState(NOTIFICATIONS_DATA);
@@ -57,7 +59,7 @@ export default () => {
               <Dropdown.Toggle as={Nav.Link} className="pt-1 px-0">
                 <div className="media d-flex align-items-center">
                   <Image
-                    src={Profile3}
+                    src={AvatarUrl}
                     className="user-avatar md-avatar rounded-circle"
                   />
                   <div className="media-body ms-2 text-dark align-items-center d-none d-lg-block">

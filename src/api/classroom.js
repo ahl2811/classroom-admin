@@ -8,3 +8,8 @@ export const getClassrooms = async ({ page = 1, search = null }) => {
   const { data } = await request.get(`${queryString}`, getAuthorization());
   return data;
 };
+
+export const getClassDetail = async (id) => {
+  const { data } = await request.get(`/classrooms/${id}`, getAuthorization());
+  return data;
+};

@@ -6,7 +6,6 @@ import { AdminsTable } from "../components/Tables";
 
 export const AdminsPage = () => {
   const [search, setSearch] = useState("");
-  console.log("search", search);
   return (
     <>
       <div className="table-settings mb-4">

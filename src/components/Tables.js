@@ -5,13 +5,7 @@ import {
   faUserLock,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  Button,
-  ButtonGroup,
-  Card,
-  Dropdown,
-  Table,
-} from "@themesberg/react-bootstrap";
+import { Button, Card, Dropdown, Table } from "@themesberg/react-bootstrap";
 import React, { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import { Link } from "react-router-dom";
@@ -92,7 +86,7 @@ export const ClassroomsTable = (props) => {
   );
 };
 
-const getStatusVariant = (status) => {
+export const getStatusVariant = (status) => {
   const statusVariant =
     status === UserStatus.Active
       ? "text-success"
@@ -158,44 +152,46 @@ export const UsersTable = (props) => {
           <span className={`fw-normal ${statusVariant}`}>{status}</span>
         </td>
         <td>
-          <Dropdown as={ButtonGroup}>
-            <Dropdown.Toggle
-              as={Button}
-              split
-              variant="link"
-              className="text-dark m-0 p-0"
-            >
-              <span className="icon icon-sm">
-                <FontAwesomeIcon icon={faEllipsisH} className="icon-dark" />
-              </span>
-            </Dropdown.Toggle>
-            <Dropdown.Menu>
-              <Dropdown.Item>
-                <FontAwesomeIcon icon={faEye} className="me-2" /> View Details
-              </Dropdown.Item>
-              {status !== UserStatus.Banned ? (
-                <Dropdown.Item
-                  onClick={() => handleUpdateStatus(id, UserStatus.Banned)}
-                >
-                  <FontAwesomeIcon
-                    icon={faUserLock}
-                    className="me-2 text-danger"
-                  />{" "}
-                  Ban Account
+          <>
+            <Dropdown alignRight>
+              <Dropdown.Toggle
+                as={Button}
+                split
+                variant="link"
+                className="text-dark m-0 p-0"
+              >
+                <span className="icon icon-sm">
+                  <FontAwesomeIcon icon={faEllipsisH} className="icon-dark" />
+                </span>
+              </Dropdown.Toggle>
+              <Dropdown.Menu>
+                <Dropdown.Item as={Link} to={`${Routes.Users.path}/${id}`}>
+                  <FontAwesomeIcon icon={faEye} className="me-2" /> View Details
                 </Dropdown.Item>
-              ) : (
-                <Dropdown.Item
-                  onClick={() => handleUpdateStatus(id, UserStatus.Active)}
-                >
-                  <FontAwesomeIcon
-                    icon={faLockOpen}
-                    className="me-2 text-success"
-                  />{" "}
-                  Unban Account
-                </Dropdown.Item>
-              )}
-            </Dropdown.Menu>
-          </Dropdown>
+                {status !== UserStatus.Banned ? (
+                  <Dropdown.Item
+                    onClick={() => handleUpdateStatus(id, UserStatus.Banned)}
+                  >
+                    <FontAwesomeIcon
+                      icon={faUserLock}
+                      className="me-2 text-danger"
+                    />{" "}
+                    Lock Account
+                  </Dropdown.Item>
+                ) : (
+                  <Dropdown.Item
+                    onClick={() => handleUpdateStatus(id, UserStatus.Active)}
+                  >
+                    <FontAwesomeIcon
+                      icon={faLockOpen}
+                      className="me-2 text-success"
+                    />{" "}
+                    UnLock Account
+                  </Dropdown.Item>
+                )}
+              </Dropdown.Menu>
+            </Dropdown>
+          </>
         </td>
       </tr>
     );
@@ -217,7 +213,7 @@ export const UsersTable = (props) => {
           </thead>
           <tbody>
             {items.map((t) => (
-              <TableRow key={`transaction-${t.code}`} {...t} />
+              <TableRow key={`transaction-${t.id}`} {...t} />
             ))}
           </tbody>
         </Table>
@@ -261,7 +257,7 @@ export const AdminsTable = (props) => {
           <span className={`fw-normal ${statusVariant}`}>{status}</span>
         </td>
         <td>
-          <Button size="sm" as={Link} to={`${Routes.Users.path}/${id}`}>
+          <Button size="sm" as={Link} to={`${Routes.Admins.path}/${id}`}>
             Details
           </Button>
         </td>

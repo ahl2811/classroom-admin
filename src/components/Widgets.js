@@ -1,5 +1,9 @@
-import React from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faAngular,
+  faBootstrap,
+  faReact,
+  faVuejs,
+} from "@fortawesome/free-brands-svg-icons";
 import {
   faAngleDown,
   faAngleUp,
@@ -10,36 +14,34 @@ import {
   faFolderOpen,
   faGlobeEurope,
   faPaperclip,
-  faUserPlus,
+  faPodcast,
 } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-  faAngular,
-  faBootstrap,
-  faReact,
-  faVuejs,
-} from "@fortawesome/free-brands-svg-icons";
-import {
-  Col,
-  Row,
-  Card,
-  Image,
   Button,
+  Card,
+  Col,
+  Image,
   ListGroup,
   ProgressBar,
+  Row,
 } from "@themesberg/react-bootstrap";
+import React from "react";
+import ProfileCover from "../assets/img/profile-cover.jpg";
+import teamMembers from "../data/teamMembers";
 import {
-  CircleChart,
   BarChart,
+  CircleChart,
   SalesValueChart,
   SalesValueChartphone,
 } from "./Charts";
+import { getStatusVariant } from "./Tables";
 
-import Profile1 from "../assets/img/team/profile-picture-1.jpg";
-import ProfileCover from "../assets/img/profile-cover.jpg";
+const AvatarUrl =
+  "https://avataaars.io/?avatarStyle=None&topType=LongHairCurly&accessoriesType=Kurt&hairColor=Blonde&facialHairType=Blank&clotheType=BlazerSweater&eyeType=Side&eyebrowType=UpDownNatural&mouthType=Tongue&skinColor=Brown";
 
-import teamMembers from "../data/teamMembers";
-
-export const ProfileCardWidget = () => {
+export const ProfileCardWidget = (props) => {
+  const { name, email, status } = props;
   return (
     <Card border="light" className="text-center p-0 mb-4">
       <div
@@ -48,21 +50,18 @@ export const ProfileCardWidget = () => {
       />
       <Card.Body className="pb-5">
         <Card.Img
-          src={Profile1}
+          src={AvatarUrl}
           alt="Neil Portrait"
           className="user-avatar large-avatar rounded-circle mx-auto mt-n7 mb-4"
         />
-        <Card.Title>Neil Sims</Card.Title>
-        <Card.Subtitle className="fw-normal">
-          Senior Software Engineer
-        </Card.Subtitle>
-        <Card.Text className="text-gray mb-4">New York, USA</Card.Text>
-
-        <Button variant="primary" size="sm" className="me-2">
-          <FontAwesomeIcon icon={faUserPlus} className="me-1" /> Connect
-        </Button>
-        <Button variant="secondary" size="sm">
-          Send Message
+        <Card.Title>{name}</Card.Title>
+        <Card.Subtitle className="fw-normal">{email}</Card.Subtitle>
+        <Button variant="light" size="sm" className="mt-3">
+          <FontAwesomeIcon
+            icon={faPodcast}
+            className={getStatusVariant(status)}
+          />{" "}
+          {status}
         </Button>
       </Card.Body>
     </Card>

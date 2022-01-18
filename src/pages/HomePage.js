@@ -17,8 +17,9 @@ import { AddPasswordPage } from "./commons/AddPassword";
 import NotFoundPage from "./commons/NotFound";
 import ServerError from "./commons/ServerError";
 import Signin from "./commons/Signin";
-import { AdminDetailsPage } from "./Settings";
+import { AdminDetailsPage } from "./AdminDetails";
 import { UsersPage } from "./Users";
+import { UserDetailsPage } from "./UserDetails";
 
 const RouteWithLoader = ({ component: Component, ...rest }) => {
   const [loaded, setLoaded] = useState(false);
@@ -123,6 +124,11 @@ export const HomePage = () => {
               exact
               path={Routes.Users.path}
               component={UsersPage}
+            />
+            <RouteWithSidebar
+              exact
+              path={Routes.UserDetails.path}
+              component={UserDetailsPage}
             />
             <RouteWithSidebar
               exact

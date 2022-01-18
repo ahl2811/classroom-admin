@@ -16,7 +16,12 @@ export const updateUserStatus = async ({ userId, status }) => {
 export const updateStudentId = async ({ userId, studentId }) => {
   return await request.patch(
     `/user/${userId}`,
-    { studentId },
+    { studentId, userId },
     getAuthorization()
   );
+};
+
+export const getUser = async (id) => {
+  const { data } = await request.get("/user/" + id, getAuthorization());
+  return data;
 };
